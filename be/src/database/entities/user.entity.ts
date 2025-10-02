@@ -43,7 +43,10 @@ export class UserEntity {
   updatedAt: Date;
 
   @OneToMany(() => EventEntity, (event) => event.createdBy)
-  events: EventEntity[];
+  eventsCreated: EventEntity[];
+
+  @OneToMany(() => EventEntity, (event) => event.updatedBy)
+  eventsUpdated: EventEntity[];
 
   @OneToMany(() => BookingEntity, (booking) => booking.user)
   bookings: BookingEntity[];

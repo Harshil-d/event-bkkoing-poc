@@ -9,6 +9,9 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { EventsModule } from './events/events.module';
+import { BookingsModule } from './bookings/bookings.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
     DatabaseModule,
     UsersModule,
     AuthModule,
+    EventsModule,
+    BookingsModule,
+    NotificationsModule,
     DashboardModule,
   ],
   controllers: [AppController],

@@ -14,10 +14,12 @@ export class NotificationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  userId: number;
+  @Column({ type: 'uuid' })
+  userId: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.id)
+  @ManyToOne(() => UserEntity, (user) => user.notifications, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({
     name: 'userId',
   })

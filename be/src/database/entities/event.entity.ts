@@ -7,6 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  VersionColumn,
 } from 'typeorm';
 
 import { UserEntity } from './user.entity';
@@ -32,29 +33,36 @@ export class EventEntity {
   @Column({ type: 'int' })
   seatsAvailable: number;
 
-  @Column()
-  createdById?: number | undefined;
+  @Column({ type: 'uuid' })
+  createdById: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.id)
+  @ManyToOne(() => UserEntity, (user) => user.eventsCreated, {
+    onDelete: 'RESTRICT',
+  })
   @JoinColumn({
     name: 'createdById',
   })
   createdBy: UserEntity;
 
-  @Column({ nullable: true })
-  updatedById?: number | undefined;
+  @Column({ type: 'uuid', nullable: true })
+  updatedById?: string | null;
 
-  @ManyToOne(() => UserEntity, (user) => user.id)
+  @ManyToOne(() => UserEntity, (user) => user.eventsUpdated, {
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({
     name: 'updatedById',
   })
-  updatedBy?: UserEntity | undefined;
+  updatedBy?: UserEntity | null;
 
   @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
+
+  @VersionColumn()
+  version: number;
 
   @OneToMany(() => BookingEntity, (booking) => booking.event)
   bookings: BookingEntity[];
