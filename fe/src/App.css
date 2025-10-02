@@ -1,0 +1,13 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.linear-progress-bar {
+  width: calc(100% + 20px);
+  z-index: 10000000;
+  position: fixed !important;
+}
