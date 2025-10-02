@@ -12,7 +12,13 @@ export class BookingEventSummaryDto {
 
   @Expose()
   @Type(() => Date)
-  eventDate: Date;
+  date: Date;
+
+  @Expose()
+  location: string;
+
+  @Expose()
+  price: number;
 }
 
 /**
@@ -29,14 +35,25 @@ export class BookingResponseDto {
   eventId: string;
 
   @Expose()
-  seatsBooked: number;
+  numberOfSeats: number;
 
   @Expose()
   status: string;
 
   @Expose()
   @Type(() => Date)
+  bookingDate: Date;
+
+  @Expose()
+  @Type(() => Date)
   createdAt: Date;
+
+  @Expose()
+  @Type(() => Date)
+  updatedAt: Date;
+
+  @Expose()
+  totalAmount: number;
 
   @Expose()
   @Type(() => BookingEventSummaryDto)

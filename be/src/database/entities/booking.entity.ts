@@ -48,6 +48,12 @@ export class BookingEntity {
   @Column({ type: 'enum', enum: BookingStatus, default: BookingStatus.CONFIRMED })
   status: BookingStatus;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  totalAmount: number;
+
   @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
+
+  @CreateDateColumn({ name: 'updatedAt' })
+  updatedAt: Date;
 }

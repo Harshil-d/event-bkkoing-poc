@@ -69,7 +69,7 @@ export const createAccessToken = async (): Promise<IAccessTokenResponse> => {
     const refreshToken = localStorage.getItem(refreshTokenKey);
 
     const response = await axios.post(
-      `/dietitian/access-token`,
+      `/auth/refresh-token`,
       {},
       {
         headers: { Authorization: `Bearer ${refreshToken}` },
@@ -144,8 +144,8 @@ export const signIn = async ({
       }) as unknown as ISignInResponse;
     }
 
-    const response = await axios.post(`/dietitian/login`, {
-      userName,
+    const response = await axios.post(`/auth/user/login`, {
+      email: userName,
       password,
     });
 
@@ -218,8 +218,8 @@ export const forgotPassword = async ({
       }) as unknown as IForgotPasswordRequestResponse;
     }
 
-    const response = await axios.post(`/dietitian/forgot-password`, {
-      userName,
+    const response = await axios.post(`/auth/forgot-password`, {
+      email: userName,
     });
 
     return wrapResponse<IForgotPasswordRequestResponse>(response);
@@ -265,7 +265,7 @@ export const resetPassword = async ({
       }) as unknown as IResetPasswordResponse;
     }
 
-    const response = await axios.post(`/dietitian/reset-password`, {
+    const response = await axios.post(`/auth/reset-password`, {
       token,
       password,
     });

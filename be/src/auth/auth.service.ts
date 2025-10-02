@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, ForbiddenException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ForbiddenException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
@@ -68,7 +73,8 @@ export class AuthService {
     const accessToken = await this.jwtService.signAsync(payload);
 
     const refreshSecret = this.configService.getOrThrow<AppConfiguration>('app').jwt.refreshSecret;
-    const refreshExpiresIn = this.configService.getOrThrow<AppConfiguration>('app').jwt.refreshExpiresIn;
+    const refreshExpiresIn =
+      this.configService.getOrThrow<AppConfiguration>('app').jwt.refreshExpiresIn;
 
     const refreshToken = await this.jwtService.signAsync(payload, {
       secret: refreshSecret,
@@ -118,6 +124,24 @@ export class AuthService {
     );
 
     return this.buildAuthResponse(user.id, user.fullName, user.email, user.role);
+  }
+
+  /**
+   * Refreshes access token using refresh token.
+   */
+  async refreshToken(refreshToken: string): Promise<AuthTokensDto> {
+    try {
+      const refreshSecret =
+        this.configService.getOrThrow<AppConfiguration>('app').jwt.refreshSecret;
+      const payload = this.jwtService.verify(refreshToken, { secret: refreshSecret });
+
+      // Generate new tokens
+      const tokens = await this.generateTokens(payload.sub, payload.email, payload.role);
+
+      return tokens;
+    } catch (error) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
   }
 
   /**

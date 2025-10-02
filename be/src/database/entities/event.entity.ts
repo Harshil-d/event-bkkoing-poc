@@ -33,6 +33,12 @@ export class EventEntity {
   @Column({ type: 'int' })
   seatsAvailable: number;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  price: number;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  location?: string;
+
   @Column({ type: 'uuid' })
   createdById: string;
 

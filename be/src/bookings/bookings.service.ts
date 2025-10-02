@@ -8,10 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, EntityManager } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 
-import {
-  BookingEntity,
-  BookingStatus,
-} from '../database/entities/booking.entity';
+import { BookingEntity, BookingStatus } from '../database/entities/booking.entity';
 import { EventEntity } from '../database/entities/event.entity';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import {
@@ -36,10 +33,7 @@ export class BookingsService {
   /**
    * Books seats for an event using a pessimistic lock to avoid race conditions and overbooking.
    */
-  async bookEvent(
-    userId: string,
-    payload: CreateBookingDto,
-  ): Promise<BookingResponseDto> {
+  async bookEvent(userId: string, payload: CreateBookingDto): Promise<BookingResponseDto> {
     return this.dataSource.transaction(async (manager) => {
       const event = await manager
         .getRepository(EventEntity)
@@ -64,10 +58,13 @@ export class BookingsService {
 
       await manager.getRepository(EventEntity).save(event);
 
+      const totalAmount = payload.seats * event.price;
+
       const bookingRecord = manager.getRepository(BookingEntity).create({
         userId,
         eventId: event.id,
         seatsBooked: payload.seats,
+        totalAmount,
         status: BookingStatus.CONFIRMED,
       });
 
@@ -85,7 +82,13 @@ export class BookingsService {
 
       booking.event = event;
 
-      return plainToInstance(BookingResponseDto, booking, {
+      const bookingResponse = {
+        ...booking,
+        numberOfSeats: booking.seatsBooked,
+        bookingDate: booking.createdAt,
+      };
+
+      return plainToInstance(BookingResponseDto, bookingResponse, {
         excludeExtraneousValues: true,
       });
     });

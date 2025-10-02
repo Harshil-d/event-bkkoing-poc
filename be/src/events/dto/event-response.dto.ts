@@ -15,19 +15,19 @@ export class EventResponseDto {
 
   @Expose()
   @Type(() => Date)
-  eventDate: Date;
+  date: Date;
 
   @Expose()
   totalSeats: number;
 
   @Expose()
-  seatsAvailable: number;
+  availableSeats: number;
 
   @Expose()
-  createdById: string;
+  price: number;
 
   @Expose()
-  updatedById?: string | null;
+  location?: string;
 
   @Expose()
   @Type(() => Date)

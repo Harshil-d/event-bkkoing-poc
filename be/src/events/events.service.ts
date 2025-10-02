@@ -148,6 +148,14 @@ export class EventsService {
       event.eventDate = new Date(payload.eventDate);
     }
 
+    if (payload.price !== undefined) {
+      event.price = payload.price;
+    }
+
+    if (payload.location !== undefined) {
+      event.location = payload.location;
+    }
+
     event.updatedById = adminId;
 
     const saved = await this.eventRepository.save(event);
