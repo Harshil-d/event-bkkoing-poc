@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -9,29 +10,32 @@ import {
 import { UserEntity } from './user.entity';
 import { EventEntity } from './event.entity';
 
-export enum BookingStatus {
-  CONFIRMED = 'CONFIRMED',
-  CANCELLED = 'CANCELLED',
-  PENDING = 'PENDING',
-}
-
 @Entity({ name: 'bookings' })
 export class BookingEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.bookings)
+  @Column()
+  userId: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  @JoinColumn({
+    name: 'userId',
+  })
   user: UserEntity;
 
-  @ManyToOne(() => EventEntity, (event) => event.bookings)
+  @Column()
+  eventId: number;
+
+  @ManyToOne(() => EventEntity, (event) => event.id)
+  @JoinColumn({
+    name: 'eventId',
+  })
   event: EventEntity;
 
-  @Column({ name: 'seats_booked', type: 'int' })
+  @Column({ type: 'int' })
   seatsBooked: number;
 
-  @Column({ type: 'enum', enum: BookingStatus, default: BookingStatus.PENDING })
-  status: BookingStatus;
-
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 }

@@ -21,25 +21,25 @@ export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true, type: 'citext' })
+  @Column({ unique: true, type: 'varchar', length: 124 })
   email: string;
 
-  @Column({ name: 'password_hash' })
-  passwordHash: string;
+  @Column({ type: 'varchar', length: 255 })
+  password: string;
 
-  @Column({ name: 'full_name' })
+  @Column()
   fullName: string;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 
   @OneToMany(() => EventEntity, (event) => event.createdBy)

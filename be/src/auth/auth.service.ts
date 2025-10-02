@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ForbiddenException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { plainToInstance } from 'class-transformer';
@@ -6,6 +6,8 @@ import { plainToInstance } from 'class-transformer';
 import { UsersService } from '../users/users.service';
 import { AdminLoginDto } from './dto/admin-login.dto';
 import { UserLoginDto } from './dto/user-login.dto';
+import { UserRegisterDto } from './dto/user-register.dto';
+import { AdminRegisterDto } from './dto/admin-register.dto';
 import { UserRole } from '../database/entities/user.entity';
 import { AuthResponseDto, AuthenticatedUserDto, AuthTokensDto } from './dto/auth-response.dto';
 import { JwtPayload } from './dto/jwt-payload.interface';
@@ -74,6 +76,48 @@ export class AuthService {
     });
 
     return plainToInstance(AuthTokensDto, { accessToken, refreshToken });
+  }
+
+  /**
+   * Registers a new user with USER role.
+   */
+  async userRegister(payload: UserRegisterDto): Promise<AuthResponseDto> {
+    // Check if user already exists
+    const existingUser = await this.usersService.findByEmail(payload.email);
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
+
+    // Create new user with USER role
+    const user = await this.usersService.createUser(
+      payload.email,
+      payload.password,
+      payload.fullName,
+      UserRole.USER,
+    );
+
+    return this.buildAuthResponse(user.id, user.fullName, user.email, user.role);
+  }
+
+  /**
+   * Registers a new admin with ADMIN role.
+   */
+  async adminRegister(payload: AdminRegisterDto): Promise<AuthResponseDto> {
+    // Check if admin already exists
+    const existingUser = await this.usersService.findByEmail(payload.email);
+    if (existingUser) {
+      throw new ConflictException('Admin with this email already exists');
+    }
+
+    // Create new admin with ADMIN role
+    const user = await this.usersService.createUser(
+      payload.email,
+      payload.password,
+      payload.fullName,
+      UserRole.ADMIN,
+    );
+
+    return this.buildAuthResponse(user.id, user.fullName, user.email, user.role);
   }
 
   /**

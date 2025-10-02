@@ -2,11 +2,15 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import databaseConfig, { buildTypeOrmOptions, DatabaseConfiguration } from '../config/database.config';
+import databaseConfig, {
+  buildTypeOrmOptions,
+  DatabaseConfiguration,
+} from '../config/database.config';
 import { UserEntity } from './entities/user.entity';
 import { EventEntity } from './entities/event.entity';
 import { BookingEntity } from './entities/booking.entity';
 import { NotificationEntity } from './entities/notification.entity';
+// import { CustomNamingStrategy } from '@app/utils/typeorm-custom-naming-strategy.util';
 
 @Module({
   imports: [
@@ -18,6 +22,7 @@ import { NotificationEntity } from './entities/notification.entity';
         return {
           ...buildTypeOrmOptions(config),
           entities: [UserEntity, EventEntity, BookingEntity, NotificationEntity],
+          // namingStrategy: new CustomNamingStrategy(),
         };
       },
     }),

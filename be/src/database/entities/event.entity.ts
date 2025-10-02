@@ -2,11 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  VersionColumn,
 } from 'typeorm';
 
 import { UserEntity } from './user.entity';
@@ -17,32 +17,44 @@ export class EventEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   title: string;
 
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ name: 'event_date', type: 'timestamptz' })
+  @Column({ type: 'timestamp with time zone' })
   eventDate: Date;
 
-  @Column({ name: 'total_seats', type: 'int' })
+  @Column({ type: 'int' })
   totalSeats: number;
 
-  @Column({ name: 'seats_available', type: 'int' })
+  @Column({ type: 'int' })
   seatsAvailable: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.events)
+  @Column()
+  createdById?: number | undefined;
+
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  @JoinColumn({
+    name: 'createdById',
+  })
   createdBy: UserEntity;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @Column({ nullable: true })
+  updatedById?: number | undefined;
+
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  @JoinColumn({
+    name: 'updatedById',
+  })
+  updatedBy?: UserEntity | undefined;
+
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
-
-  @VersionColumn()
-  version: number;
 
   @OneToMany(() => BookingEntity, (booking) => booking.event)
   bookings: BookingEntity[];

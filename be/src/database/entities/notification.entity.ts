@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -13,18 +14,24 @@ export class NotificationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.notifications)
+  @Column()
+  userId: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  @JoinColumn({
+    name: 'userId',
+  })
   user: UserEntity;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', length: 255 })
   message: string;
 
-  @Column({ name: 'is_read', default: false })
+  @Column({ type: 'boolean', default: false })
   isRead: boolean;
 
-  @Column({ nullable: true })
-  link?: string | null;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  redirectionUrl?: string | null;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 }

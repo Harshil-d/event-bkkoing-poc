@@ -32,7 +32,7 @@ export class UsersService {
       return null;
     }
 
-    const passwordMatches = await bcrypt.compare(password, user.passwordHash);
+    const passwordMatches = await bcrypt.compare(password, user.password);
 
     if (!passwordMatches) {
       return null;
@@ -59,7 +59,7 @@ export class UsersService {
 
     const user = this.userRepository.create({
       email,
-      passwordHash,
+      password: passwordHash,
       fullName,
       role,
     });
