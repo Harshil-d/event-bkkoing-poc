@@ -8,15 +8,9 @@ import { listItemButtonClasses } from '@mui/joy/ListItemButton';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
-import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
-import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
-import Groups2Icon from '@mui/icons-material/Groups2';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import EventIcon from '@mui/icons-material/Event';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
-import BusinessIcon from '@mui/icons-material/Business';
-import Person2Icon from '@mui/icons-material/Person2';
+import BookOnlineIcon from '@mui/icons-material/BookOnline';
 
 import { ColorSchemeToggle } from '../UI/ColorSchemeToggle';
 import CompanyLogo from '../../assets/images/full-logo.png';
@@ -27,6 +21,12 @@ import { GlobalState } from '../../store/index.store';
 import { useSelector } from 'react-redux';
 import { Skeleton, Stack } from '@mui/joy';
 import { closeSidebar } from '../../utilities/sidebar.utility';
+import { constants } from '../../constants/index.constants';
+import {
+  canAccessRoute,
+  getRoleDisplayName,
+  getRoleColor,
+} from '../../utilities/role.utility';
 
 const Sidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -37,65 +37,30 @@ const Sidebar: React.FC = () => {
     navigate('/sign-in');
   };
 
-  const adminOnlyLinks = [
-    {
-      text: 'Dietitian Group',
-      path: '/dietitian-group',
-      icon: <BusinessIcon />,
-      order: 8,
-    },
-  ];
+  // Get icon component by name
+  const getIconComponent = (iconName: string) => {
+    switch (iconName) {
+      case 'DashboardRoundedIcon':
+        return <DashboardRoundedIcon />;
+      case 'EventIcon':
+        return <EventIcon />;
+      case 'BookOnlineIcon':
+        return <BookOnlineIcon />;
+      default:
+        return <DashboardRoundedIcon />;
+    }
+  };
 
-  const links = [
-    {
-      text: 'Dashboard',
-      path: '/',
-      icon: <DashboardRoundedIcon />,
-      order: 1,
-    },
-    {
-      text: 'Clients',
-      path: '/clients',
-      icon: <GroupRoundedIcon />,
-      order: 2,
-    },
-    {
-      text: 'Diets',
-      path: '/diets',
-      icon: <MenuBookIcon />,
-      order: 3,
-    },
-    {
-      text: 'Dietitians',
-      path: '/dietitians',
-      icon: <Groups2Icon />,
-      order: 4,
-    },
-    {
-      text: 'Diet Plans',
-      path: '/diet-plans',
-      icon: <ReceiptLongIcon />,
-      order: 5,
-    },
-    {
-      text: 'Tasks',
-      path: '/tasks',
-      icon: <AssignmentRoundedIcon />,
-      order: 6,
-    },
-    {
-      text: 'Appointments',
-      path: '/appointments',
-      icon: <EventIcon />,
-      order: 7,
-    },
-    {
-      text: 'My Profile',
-      path: '/my-profile',
-      icon: <Person2Icon />,
-      order: 9,
-    },
-  ];
+  // Filter navigation items based on user role
+  const links = constants.roles.navigation
+    .filter((navItem) => canAccessRoute(user?.role, navItem.roles))
+    .map((navItem) => ({
+      text: navItem.label,
+      path: navItem.path,
+      icon: getIconComponent(navItem.icon),
+      order: navItem.order,
+    }))
+    .sort((a, b) => a.order - b.order);
 
   return (
     <Sheet
@@ -150,7 +115,7 @@ const Sidebar: React.FC = () => {
         onClick={() => closeSidebar()}
       />
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-        <img src={CompanyLogo} alt='EvoDietics' height={30} />
+        <img src={CompanyLogo} alt='EventBooking' height={120} />
         <Box sx={{ ml: 'auto' }}>
           <ColorSchemeToggle />
         </Box>
@@ -175,7 +140,7 @@ const Sidebar: React.FC = () => {
             '--ListItem-radius': (theme) => theme.vars.radius.sm,
           }}
         >
-          {[...adminOnlyLinks, ...links]
+          {links
             .sort((a, b) => a.order - b.order)
             .map(({ text, path, icon }) => (
               <SidebarLink text={text} path={path} key={text}>
@@ -197,10 +162,18 @@ const Sidebar: React.FC = () => {
               <Typography level='title-sm'>
                 {`${user?.firstName} ${user?.lastName}`.trim()}
               </Typography>
-              <Typography level='body-xs'>{user?.role}</Typography>
-              <Typography level='body-xs'>
-                {user?.dietitianGroupName}
+              <Typography
+                level='body-xs'
+                color={getRoleColor(user?.role)}
+                sx={{ fontWeight: 'bold' }}
+              >
+                {getRoleDisplayName(user?.role)}
               </Typography>
+              {user?.organizationName && (
+                <Typography level='body-xs'>
+                  {user?.organizationName}
+                </Typography>
+              )}
             </>
           ) : (
             <Stack spacing={0}>

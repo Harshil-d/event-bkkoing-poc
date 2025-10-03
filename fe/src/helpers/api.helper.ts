@@ -19,9 +19,54 @@ export const clearAuthSession = () => {
 
 export const wrapResponse = <T>(response: any): T => {
   try {
-    return {
-      ...response.data,
+    // Handle the actual API response structure
+    if (response.data && response.data.items) {
+      // For list responses (events, bookings) - map items to data and meta to pagination
+      const result = {
+        statusCode: response.status, // Add the status code from the response
+        ...response.data,
+        data: response.data.items,
+        pagination: response.data.meta,
+      } as T;
+      
+      return result;
+    }
+    
+    // For single item responses - map response.data to payload to match GenericResponse interface
+    const result = {
+      statusCode: response.status, // Add the status code from the response
+      payload: response.data, // Map response.data to payload to match interface
     } as T;
+    
+    return result;
+  } catch (err) {
+    throw new Error('Something went wrong');
+  }
+};
+
+// Special wrapper for event/booking responses that expect 'data' property
+export const wrapEventResponse = <T>(response: any): T => {
+  try {
+    // Handle the actual API response structure
+    if (response.data && response.data.items) {
+      // For list responses (events, bookings) - map items to data and meta to pagination
+      const result = {
+        statusCode: response.status, // Add the status code from the response
+        ...response.data,
+        data: response.data.items,
+        pagination: response.data.meta,
+      } as T;
+      
+      return result;
+    }
+    
+    // For single item responses - map response.data to data for event/booking responses
+    const result = {
+      statusCode: response.status, // Add the status code from the response
+      data: response.data, // Map response.data to data for event/booking responses
+    } as T;
+    
+    return result;
   } catch (err) {
     throw new Error('Something went wrong');
   }
@@ -38,7 +83,7 @@ export const wrapErrorResponse = <T>(error: any): T => {
 
     if (error.response.status === constants.api.httpStatusCodes.unauthorized) {
       clearAuthSession();
-      window.location.href = '/sign-in';
+      // Don't redirect here - let the component handle it
     }
 
     return {

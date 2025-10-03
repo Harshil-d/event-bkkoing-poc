@@ -10,14 +10,13 @@ import CompanyLogo from '../../assets/images/full-logo.png';
 import BannerLight from '../../assets/images/banner-light.avif';
 import BannerDark from '../../assets/images/banner-dark.avif';
 import { ColorSchemeToggle } from '../../components/UI/ColorSchemeToggle';
-import SignInForm from '../../components/Auth/SignInForm';
+import AdminSignInForm from '../../components/Auth/AdminSignInForm';
 import { ISignInResponse } from '../../dtos/auth.dto';
 import { constants } from '../../constants/index.constants';
 import AlertMessage from '../../components/UI/AlertMessage';
 import LoadingSpinner from '../../components/UI/LoadingSpinner';
-import { handleAuthSuccess, handleAuthError } from '../../utilities/redirect.utility';
 
-const SignInPage: React.FC = () => {
+const AdminSignInPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [signInError, setSignInError] = useState<string>();
@@ -35,7 +34,7 @@ const SignInPage: React.FC = () => {
       
       // Add a small delay to ensure tokens are fully processed, then navigate
       setTimeout(() => {
-        navigate('/events', { replace: true });
+        navigate('/', { replace: true });
       }, 100);
     }
   }, [isSignIn, isRedirecting, navigate]);
@@ -47,7 +46,7 @@ const SignInPage: React.FC = () => {
 
   useEffect(() => {
     if (authState === constants.auth.authState.signedIn) {
-      navigate('/events', { replace: true });
+      navigate('/', { replace: true });
     }
   }, [authState, navigate]);
 
@@ -99,7 +98,7 @@ const SignInPage: React.FC = () => {
             sx={{ py: 3, display: 'flex', justifyContent: 'space-between' }}
           >
             <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
-              <img src={CompanyLogo} alt='Event Booking' height={30} />
+              <img src={CompanyLogo} alt='Event Booking Admin' height={30} />
             </Box>
             <ColorSchemeToggle />
           </Box>
@@ -128,17 +127,20 @@ const SignInPage: React.FC = () => {
           >
             <Stack sx={{ gap: 4, mb: 2 }}>
               <Typography component='h1' level='h3'>
-                Sign in
+                Admin Sign In
+              </Typography>
+              <Typography level='body-sm' color='neutral'>
+                Access the admin panel to manage events and users
               </Typography>
             </Stack>
             {signInError && (
               <AlertMessage color='danger'>{signInError}</AlertMessage>
             )}
             {isRedirecting && (
-              <LoadingSpinner message="Login successful! Redirecting to events page..." />
+              <LoadingSpinner message="Admin login successful! Redirecting to dashboard..." />
             )}
             <Stack sx={{ gap: 4, mt: 2 }}>
-              <SignInForm
+              <AdminSignInForm
                 updateSignInErrorHandler={updateSignInErrorHandler}
                 updateSignInResponseHandler={updateSignInResponseHandler}
               />
@@ -146,7 +148,7 @@ const SignInPage: React.FC = () => {
           </Box>
           <Box component='footer' sx={{ py: 3 }}>
             <Typography level='body-xs' sx={{ textAlign: 'center' }}>
-              © Event Booking {new Date().getFullYear()}
+              © Event Booking Admin {new Date().getFullYear()}
             </Typography>
           </Box>
         </Box>
@@ -176,4 +178,5 @@ const SignInPage: React.FC = () => {
   );
 };
 
-export default SignInPage;
+export default AdminSignInPage;
+

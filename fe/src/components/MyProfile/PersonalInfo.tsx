@@ -46,7 +46,7 @@ const PersonalInfo: React.FC = () => {
     contactNumber: '',
     whatsAppNumber: undefined,
     role: '',
-    dietitianGroupName: '',
+    organizationName: '',
   });
   const [initialUserDetails, setInitialUserDetails] = useState<IUserProfile>({
     userName: '',
@@ -59,7 +59,7 @@ const PersonalInfo: React.FC = () => {
     contactNumber: '',
     whatsAppNumber: '',
     role: '',
-    dietitianGroupName: '',
+    organizationName: '',
   });
   const [formErrors, setFormErrors] = useState<IFieldError[]>();
 
@@ -109,7 +109,7 @@ const PersonalInfo: React.FC = () => {
             contactNumber: '',
             whatsAppNumber: '',
             role: '',
-            dietitianGroupName: '',
+            organizationName: '',
           };
           setUserDetails(profile);
           setInitialUserDetails(profile);

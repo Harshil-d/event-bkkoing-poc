@@ -15,7 +15,7 @@ export interface ISetSignInUserAction {
     firstName: string;
     lastName?: string;
     role: string;
-    dietitianGroupName: string;
+    organizationName?: string;
   };
 }
 
@@ -28,7 +28,7 @@ const userSlice = createSlice({
         firstName: payload.firstName,
         lastName: payload.lastName,
         role: payload.role,
-        dietitianGroupName: payload.dietitianGroupName,
+        organizationName: payload.organizationName,
       };
       return state;
     },

@@ -7,7 +7,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  VersionColumn,
 } from 'typeorm';
 
 import { UserEntity } from './user.entity';
@@ -66,9 +65,6 @@ export class EventEntity {
 
   @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
-
-  @VersionColumn()
-  version: number;
 
   @OneToMany(() => BookingEntity, (booking) => booking.event)
   bookings: BookingEntity[];

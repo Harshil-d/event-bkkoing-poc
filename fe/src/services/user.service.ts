@@ -1,3 +1,4 @@
+import { jwtDecode } from 'jwt-decode';
 import { constants } from '../constants/index.constants';
 import {
   IChangePasswordResponse,
@@ -19,13 +20,51 @@ import axios from '../utilities/axios.utility';
 
 export const getUserDetails = async (): Promise<IFetchUserDetailsResponse> => {
   try {
-    const response = await axios.get(`/dietitian/profile-summary`, {
-      headers: headersWithAuth(),
-    });
+    // Get user details from localStorage (stored during login)
+    const { accessTokenKey } = constants.auth.authTokenKeys;
+    const accessToken = localStorage.getItem(accessTokenKey);
+    
+    if (!accessToken) {
+      return {
+        statusCode: constants.api.httpStatusCodes.unauthorized,
+        message: 'No access token found',
+        payload: undefined
+      } as IFetchUserDetailsResponse;
+    }
 
-    return wrapResponse<IFetchUserDetailsResponse>(response);
+    // Get user details from localStorage (stored during login)
+    const userDetailsKey = 'userDetails';
+    const storedUserDetails = localStorage.getItem(userDetailsKey);
+    
+    if (storedUserDetails) {
+      const userDetails = JSON.parse(storedUserDetails);
+      return {
+        statusCode: constants.api.httpStatusCodes.ok,
+        message: 'User details retrieved successfully',
+        payload: userDetails
+      } as IFetchUserDetailsResponse;
+    }
+
+    // Fallback: decode token for basic info
+    const decodedToken = jwtDecode(accessToken) as any;
+    const userDetails = {
+      firstName: decodedToken.email?.split('@')[0] || 'User',
+      lastName: '',
+      role: decodedToken.role || 'USER',
+      organizationName: 'Event Booking'
+    };
+
+    return {
+      statusCode: constants.api.httpStatusCodes.ok,
+      message: 'User details retrieved successfully',
+      payload: userDetails
+    } as IFetchUserDetailsResponse;
   } catch (err: any) {
-    return wrapErrorResponse<IFetchUserDetailsResponse>(err);
+    return {
+      statusCode: constants.api.httpStatusCodes.internalServerError,
+      message: 'Failed to get user details',
+      payload: undefined
+    } as IFetchUserDetailsResponse;
   }
 };
 

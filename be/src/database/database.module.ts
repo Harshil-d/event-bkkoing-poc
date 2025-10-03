@@ -20,9 +20,15 @@ import { NotificationEntity } from './entities/notification.entity';
       useFactory: (configService: ConfigService) => {
         const config = configService.getOrThrow<DatabaseConfiguration>('database');
         return {
-          ...buildTypeOrmOptions(config),
+          type: 'postgres',
+          host: config.host,
+          port: config.port,
+          username: config.username,
+          password: config.password,
+          database: config.database,
+          synchronize: config.synchronize,
+          logging: config.logging,
           entities: [UserEntity, EventEntity, BookingEntity, NotificationEntity],
-          // namingStrategy: new CustomNamingStrategy(),
         };
       },
     }),

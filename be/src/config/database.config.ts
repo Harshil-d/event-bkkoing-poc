@@ -26,9 +26,7 @@ export default registerAs(
   }),
 );
 
-export const buildTypeOrmOptions = (
-  config: DatabaseConfiguration,
-): DataSourceOptions => ({
+export const buildTypeOrmOptions = (config: DatabaseConfiguration): DataSourceOptions => ({
   type: 'postgres',
   host: config.host,
   port: config.port,

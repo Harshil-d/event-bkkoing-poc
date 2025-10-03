@@ -7,7 +7,7 @@ export interface IFetchUserDetailsResponse
     firstName: string;
     lastName?: string;
     role: string;
-    dietitianGroupName: string;
+    organizationName?: string;
   }> {}
 
 export interface IFetchUserProfileResponse

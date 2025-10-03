@@ -21,41 +21,40 @@ const RootPage: React.FC = () => {
   const authState = useLoaderData() as number;
   const location = useLocation();
 
-  const [adminOnlyRoutes] = useState(['/dietitian-group']);
-
   useEffect(() => {
+    // If user is not signed in, redirect to sign-in
     if (authState !== constants.auth.authState.signedIn) {
-      navigate('/sign-in');
-    }
-
-    if (
-      adminOnlyRoutes.includes(location.pathname) &&
-      localStorage.getItem(constants.auth.authTokenKeys.signInRoleKey) !==
-        'DIETITIAN_HEAD'
-    ) {
-      navigate('/403');
+      navigate('/sign-in', { replace: true });
+      return;
     }
 
     if (authState === constants.auth.authState.signedIn) {
       const fetchUserDetails = async () => {
-        const response = await getUserDetails();
+        try {
+          const response = await getUserDetails();
 
-        if (response.statusCode === constants.api.httpStatusCodes.ok) {
-          const payload = response.payload;
+          if (response.statusCode === constants.api.httpStatusCodes.ok) {
+            const payload = response.payload;
 
-          dispatch(
-            userActions.setSignInUser({
-              firstName: payload!.firstName,
-              lastName: payload!.lastName,
-              role: payload!.role,
-              dietitianGroupName: payload!.dietitianGroupName,
-            })
-          );
+            dispatch(
+              userActions.setSignInUser({
+                firstName: payload!.firstName,
+                lastName: payload!.lastName,
+                role: payload!.role,
+                organizationName: payload!.organizationName,
+              })
+            );
+          } else {
+            // If user details fetch fails, redirect to sign-in
+            navigate('/sign-in', { replace: true });
+          }
+        } catch (error) {
+          navigate('/sign-in', { replace: true });
         }
       };
       fetchUserDetails();
     }
-  }, [authState, location, dispatch, navigate, adminOnlyRoutes]);
+  }, [authState, dispatch, navigate]);
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100dvh' }}>

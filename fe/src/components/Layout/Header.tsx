@@ -53,7 +53,7 @@ const Header: React.FC = () => {
           alignItems: 'center',
         }}
       >
-        <img src={CompanyLogo} alt='EvoDietics' height={30} />
+        <img src={CompanyLogo} alt='Event Booking' height={30} />
       </Box>
     </Sheet>
   );

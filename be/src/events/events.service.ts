@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
@@ -36,12 +32,9 @@ export class EventsService {
     const qb = this.eventRepository.createQueryBuilder('event');
 
     if (query.search) {
-      qb.andWhere(
-        '(event.title ILIKE :search OR event.description ILIKE :search)',
-        {
-          search: `%${query.search}%`,
-        },
-      );
+      qb.andWhere('(event.title ILIKE :search OR event.description ILIKE :search)', {
+        search: `%${query.search}%`,
+      });
     }
 
     if (query.dateFrom) {
@@ -127,9 +120,7 @@ export class EventsService {
 
     if (payload.totalSeats !== undefined) {
       if (payload.totalSeats < bookedSeats) {
-        throw new BadRequestException(
-          'Total seats cannot be less than already booked seats',
-        );
+        throw new BadRequestException('Total seats cannot be less than already booked seats');
       }
 
       event.totalSeats = payload.totalSeats;

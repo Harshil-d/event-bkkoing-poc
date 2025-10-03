@@ -6,7 +6,7 @@ export interface IApiConfig {
 }
 
 const apiConfig: IApiConfig = {
-  url: REACT_APP_API_URL as string,
+  url: REACT_APP_API_URL || 'http://localhost:3001/api',
   pageSize: +(REACT_APP_DEFAULT_PAGE_SIZE || 10),
 };
 

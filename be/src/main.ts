@@ -2,6 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { SwaggerModule } from '@nestjs/swagger';
+import { webcrypto } from 'crypto';
+
+// Polyfill for crypto.randomUUID() in older Node.js versions
+if (!globalThis.crypto) {
+  globalThis.crypto = webcrypto as any;
+}
 
 import { AppModule } from './app.module';
 import { buildSwaggerDocument } from './config/swagger.config';

@@ -11,11 +11,17 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 import { Request } from 'express';
 
 import { EventsService } from './events.service';
-import { CreateEventDto } from './dto/create-event.dto';
+import {
+  CreateCommuneSuccessResponseExample,
+  CreateEventDto,
+  FetchEventSuccessResponseExample,
+  NotFoundExampleResponse,
+  UnauthorizedExampleResponse,
+} from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { ListEventsDto } from './dto/list-events.dto';
 import { EventResponseDto, PaginatedEventResponseDto } from './dto/event-response.dto';
@@ -38,37 +44,12 @@ export class EventsController {
     summary: 'List Events',
     description: 'Get paginated list of events. Requires authentication.',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'Events retrieved successfully',
-    schema: {
-      example: {
-        data: [
-          {
-            id: '123e4567-e89b-12d3-a456-426614174000',
-            title: 'Tech Conference 2024',
-            description: 'Annual technology conference',
-            date: '2024-06-15T10:00:00Z',
-            location: 'Convention Center',
-            totalSeats: 500,
-            availableSeats: 450,
-            price: 99.99,
-          },
-        ],
-        pagination: {
-          page: 1,
-          limit: 10,
-          total: 1,
-          totalPages: 1,
-        },
-      },
-    },
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing token' })
+  @ApiResponse(CreateCommuneSuccessResponseExample)
+  @ApiResponse(UnauthorizedExampleResponse)
   @Get()
   @Roles(UserRole.ADMIN, UserRole.USER)
-  listEvents(@Query() query: ListEventsDto): Promise<PaginatedEventResponseDto> {
-    return this.eventsService.listEvents(query);
+  listEvents(@Query() dto: ListEventsDto): Promise<PaginatedEventResponseDto> {
+    return this.eventsService.listEvents(dto);
   }
 
   /**
@@ -78,27 +59,9 @@ export class EventsController {
     summary: 'Get Event Details',
     description: 'Get detailed information about a specific event by ID. Requires authentication.',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'Event details retrieved successfully',
-    schema: {
-      example: {
-        id: '123e4567-e89b-12d3-a456-426614174000',
-        title: 'Tech Conference 2024',
-        description:
-          'Annual technology conference featuring the latest innovations in software development, AI, and cloud computing.',
-        date: '2024-06-15T10:00:00Z',
-        location: 'Convention Center, Hall A',
-        totalSeats: 500,
-        availableSeats: 450,
-        price: 99.99,
-        createdAt: '2024-01-15T08:30:00Z',
-        updatedAt: '2024-01-15T08:30:00Z',
-      },
-    },
-  })
-  @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing token' })
-  @ApiResponse({ status: 404, description: 'Event not found' })
+  @ApiResponse(FetchEventSuccessResponseExample)
+  @ApiResponse(UnauthorizedExampleResponse)
+  @ApiResponse(NotFoundExampleResponse)
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   getEvent(@Param('id', new ParseUUIDPipe()) id: string): Promise<EventResponseDto> {
@@ -134,6 +97,20 @@ export class EventsController {
   @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing token' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid event data' })
+  @ApiBody({
+    description: 'Event creation data',
+    schema: {
+      example: {
+        title: 'Tech Conference 2024',
+        description:
+          'Annual technology conference featuring the latest innovations in software development, AI, and cloud computing. Join industry leaders for networking and knowledge sharing.',
+        eventDate: '2024-06-15T10:00:00Z',
+        totalSeats: 500,
+        price: 99.99,
+        location: 'Convention Center, Hall A',
+      },
+    },
+  })
   @Post()
   @Roles(UserRole.ADMIN)
   createEvent(@Body() payload: CreateEventDto, @Req() request: Request): Promise<EventResponseDto> {
@@ -171,6 +148,20 @@ export class EventsController {
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
   @ApiResponse({ status: 404, description: 'Event not found' })
   @ApiResponse({ status: 400, description: 'Bad Request - Invalid update data' })
+  @ApiBody({
+    description: 'Event update data (all fields are optional)',
+    schema: {
+      example: {
+        title: 'Updated Tech Conference 2024',
+        description:
+          'Updated description for the technology conference with new speakers and agenda.',
+        eventDate: '2024-06-20T09:00:00Z',
+        totalSeats: 600,
+        price: 129.99,
+        location: 'Updated Convention Center, Hall B',
+      },
+    },
+  })
   @Patch(':id')
   @Roles(UserRole.ADMIN)
   updateEvent(

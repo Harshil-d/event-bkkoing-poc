@@ -2,7 +2,7 @@ export interface IUser {
   firstName: string;
   lastName?: string;
   role: string;
-  dietitianGroupName: string;
+  organizationName?: string;
 }
 
 export interface IUserProfile {
@@ -16,5 +16,5 @@ export interface IUserProfile {
   contactNumber: string;
   whatsAppNumber?: string;
   role: string;
-  dietitianGroupName: string;
+  organizationName?: string;
 }

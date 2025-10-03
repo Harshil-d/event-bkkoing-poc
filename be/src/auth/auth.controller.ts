@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { AdminLoginDto } from './dto/admin-login.dto';
@@ -40,6 +40,15 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  @ApiBody({
+    description: 'Admin login credentials',
+    schema: {
+      example: {
+        email: 'admin@example.com',
+        password: 'AdminPass123!',
+      },
+    },
+  })
   @Post('admin/login')
   @HttpCode(HttpStatus.OK)
   adminLogin(@Body() payload: AdminLoginDto): Promise<AuthResponseDto> {
@@ -73,6 +82,15 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  @ApiBody({
+    description: 'User login credentials',
+    schema: {
+      example: {
+        email: 'user@example.com',
+        password: 'UserPass123!',
+      },
+    },
+  })
   @Post('user/login')
   @HttpCode(HttpStatus.OK)
   userLogin(@Body() payload: UserLoginDto): Promise<AuthResponseDto> {
@@ -82,6 +100,16 @@ export class AuthController {
   /**
    * Registers a new user with USER role and returns access tokens.
    */
+  @ApiBody({
+    description: 'User registration data',
+    schema: {
+      example: {
+        email: 'newuser@example.com',
+        password: 'UserPass123!',
+        fullName: 'John Doe',
+      },
+    },
+  })
   @Post('user/register')
   @HttpCode(HttpStatus.CREATED)
   userRegister(@Body() payload: UserRegisterDto): Promise<AuthResponseDto> {
@@ -91,6 +119,16 @@ export class AuthController {
   /**
    * Registers a new admin with ADMIN role and returns access tokens.
    */
+  @ApiBody({
+    description: 'Admin registration data',
+    schema: {
+      example: {
+        email: 'newadmin@example.com',
+        password: 'AdminPass123!',
+        fullName: 'Admin User',
+      },
+    },
+  })
   @Post('admin/register')
   @HttpCode(HttpStatus.CREATED)
   adminRegister(@Body() payload: AdminRegisterDto): Promise<AuthResponseDto> {
@@ -116,6 +154,14 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 401, description: 'Invalid refresh token' })
+  @ApiBody({
+    description: 'Refresh token data',
+    schema: {
+      example: {
+        refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+      },
+    },
+  })
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   refreshToken(@Body() payload: { refreshToken: string }): Promise<AuthTokensDto> {

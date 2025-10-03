@@ -65,7 +65,7 @@ const ResetPasswordPage: React.FC = () => {
             sx={{ py: 3, display: 'flex', justifyContent: 'space-between' }}
           >
             <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
-              <img src={CompanyLogo} alt='EvoDietics' height={30} />
+              <img src={CompanyLogo} alt='Event Booking' height={30} />
             </Box>
             <ColorSchemeToggle />
           </Box>
@@ -118,7 +118,7 @@ const ResetPasswordPage: React.FC = () => {
           </Box>
           <Box component='footer' sx={{ py: 3 }}>
             <Typography level='body-xs' sx={{ textAlign: 'center' }}>
-              © EvoDietics {new Date().getFullYear()}
+              © Event Booking {new Date().getFullYear()}
             </Typography>
           </Box>
         </Box>

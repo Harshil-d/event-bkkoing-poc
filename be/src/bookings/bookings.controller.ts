@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { Request } from 'express';
 
 import { BookingsService } from './bookings.service';
@@ -68,6 +68,15 @@ export class BookingsController {
     description: 'Bad Request - Invalid booking data or insufficient seats',
   })
   @ApiResponse({ status: 404, description: 'Event not found' })
+  @ApiBody({
+    description: 'Booking creation data',
+    schema: {
+      example: {
+        eventId: '123e4567-e89b-12d3-a456-426614174000',
+        seats: 2
+      }
+    }
+  })
   @Post()
   @Roles(UserRole.USER)
   createBooking(
@@ -122,7 +131,10 @@ export class BookingsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing token' })
   @ApiResponse({ status: 403, description: 'Forbidden - User access required' })
-  @Get('my')
+  @ApiQuery({ name: 'page', required: false, description: 'Page number (default: 1)', example: 1 })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page (default: 10)', example: 10 })
+  @ApiQuery({ name: 'status', required: false, description: 'Filter by booking status', example: 'CONFIRMED', enum: ['CONFIRMED', 'CANCELLED'] })
+  @Get('my-bookings')
   @Roles(UserRole.USER)
   listMyBookings(
     @Req() request: Request,
@@ -181,6 +193,9 @@ export class BookingsController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized - Invalid or missing token' })
   @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number (default: 1)', example: 1 })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page (default: 10)', example: 10 })
+  @ApiQuery({ name: 'status', required: false, description: 'Filter by booking status', example: 'CONFIRMED', enum: ['CONFIRMED', 'CANCELLED'] })
   @Get()
   @Roles(UserRole.ADMIN)
   listAllBookings(@Query() query: ListBookingsDto): Promise<PaginatedBookingResponseDto> {

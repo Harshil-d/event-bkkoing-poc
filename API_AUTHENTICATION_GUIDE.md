@@ -147,3 +147,4 @@ TOKEN=$(curl -s -X POST http://localhost:3001/api/auth/user/login \
 curl -X GET http://localhost:3001/api/events \
   -H "Authorization: Bearer $TOKEN"
 ```
+

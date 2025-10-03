@@ -22,12 +22,12 @@ import { IFieldError } from '../../interfaces/forms.interface';
 import { constants } from '../../constants/index.constants';
 import { ISignInResponse } from '../../dtos/auth.dto';
 
-export interface ISignInFormProps {
+export interface IAdminSignInFormProps {
   updateSignInErrorHandler: (error: string) => void;
   updateSignInResponseHandler: (res: ISignInResponse) => void;
 }
 
-const SignInForm: React.FC<ISignInFormProps> = ({
+const AdminSignInForm: React.FC<IAdminSignInFormProps> = ({
   updateSignInErrorHandler,
   updateSignInResponseHandler,
 }) => {
@@ -93,8 +93,8 @@ const SignInForm: React.FC<ISignInFormProps> = ({
   return (
     <Form onSubmit={handleSubmit} noValidate>
       <FormControl error={!!emailError}>
-        <FormLabel>Email</FormLabel>
-        <Input type='email' name='email' placeholder="Enter your email" autoComplete="email" />
+        <FormLabel>Admin Email</FormLabel>
+        <Input type='email' name='email' placeholder="Enter admin email" autoComplete="email" />
         {!!emailError && (
           <FormHelperText>
             <InfoOutlined />
@@ -131,7 +131,7 @@ const SignInForm: React.FC<ISignInFormProps> = ({
           fullWidth
           loading={['loading', 'submitting'].includes(navigationState)}
         >
-          Sign in
+          Admin Sign In
         </Button>
         <Box
           sx={{
@@ -146,18 +146,14 @@ const SignInForm: React.FC<ISignInFormProps> = ({
           </Link>
         </Box>
         <Box sx={{ textAlign: 'center', mt: 2 }}>
-          <Stack spacing={1}>
-            <Link level='body-sm' href='/sign-up'>
-              Don't have an account? Sign up
-            </Link>
-            <Link level='body-sm' href='/admin-sign-in' color='warning'>
-              Admin? Sign in here
-            </Link>
-          </Stack>
+          <Link level='body-sm' href='/sign-in'>
+            Regular user? Sign in here
+          </Link>
         </Box>
       </Stack>
     </Form>
   );
 };
 
-export default SignInForm;
+export default AdminSignInForm;
+
