@@ -79,10 +79,10 @@ const EventsPage: React.FC = () => {
         setEvents(response.data || []);
         setPagination(response.pagination || pagination);
       } else {
-        toast.error('Failed to fetch events');
+        toast.error(response.message || 'Failed to fetch events');
       }
-    } catch (error) {
-      toast.error('Error fetching events');
+    } catch (error: any) {
+      toast.error(error.message || 'Error fetching events');
     } finally {
       setLoading(false);
     }

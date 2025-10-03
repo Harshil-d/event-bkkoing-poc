@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import {
   Box,
@@ -50,8 +51,8 @@ const DashboardPage: React.FC = () => {
       if (bookingsResponse.statusCode === constants.api.httpStatusCodes.ok) {
         setRecentBookings(bookingsResponse.data || []);
       }
-    } catch (error) {
-      // Error fetching dashboard data
+    } catch (error: any) {
+      toast.error(error.message || 'Error fetching dashboard data');
     } finally {
       setLoading(false);
     }

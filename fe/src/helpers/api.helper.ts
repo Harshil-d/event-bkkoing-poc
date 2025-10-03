@@ -74,24 +74,50 @@ export const wrapEventResponse = <T>(response: any): T => {
 
 export const wrapErrorResponse = <T>(error: any): T => {
   try {
-    if (
-      error.response.status ===
-      constants.api.httpStatusCodes.internalServerError
-    ) {
-      throw new Error('Something went wrong');
+    // Handle network errors or no response
+    if (!error.response) {
+      return {
+        statusCode: 0,
+        message: 'Network error - Please check your connection',
+        error: 'Network Error',
+      } as T;
     }
 
-    if (error.response.status === constants.api.httpStatusCodes.unauthorized) {
+    const { status, data } = error.response;
+    
+    // Handle internal server errors
+    if (status === constants.api.httpStatusCodes.internalServerError) {
+      return {
+        statusCode: status,
+        message: 'Internal server error - Please try again later',
+        error: 'Internal Server Error',
+      } as T;
+    }
+
+    // Handle unauthorized errors
+    if (status === constants.api.httpStatusCodes.unauthorized) {
       clearAuthSession();
-      // Don't redirect here - let the component handle it
+      return {
+        statusCode: status,
+        message: 'Session expired - Please login again',
+        error: 'Unauthorized',
+      } as T;
     }
 
+    // Extract error message from API response
+    const errorMessage = data?.message || data?.error || 'An error occurred';
+    
     return {
-      ...error.response.data,
-      statusCode: error.response.status,
+      ...data,
+      statusCode: status,
+      message: errorMessage,
     } as T;
   } catch (err) {
-    throw new Error('Something went wrong');
+    return {
+      statusCode: 500,
+      message: 'Something went wrong - Please try again',
+      error: 'Unknown Error',
+    } as T;
   }
 };
 

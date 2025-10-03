@@ -58,10 +58,10 @@ const MyBookingsPage: React.FC = () => {
         setBookings(response.data || []);
         setPagination(response.pagination || pagination);
       } else {
-        toast.error('Failed to fetch bookings');
+        toast.error(response.message || 'Failed to fetch bookings');
       }
-    } catch (error) {
-      toast.error('Error fetching bookings');
+    } catch (error: any) {
+      toast.error(error.message || 'Error fetching bookings');
     } finally {
       setLoading(false);
     }
@@ -89,10 +89,10 @@ const MyBookingsPage: React.FC = () => {
           toast.success('Booking cancelled successfully');
           fetchBookings();
         } else {
-          toast.error('Failed to cancel booking');
+          toast.error(response.message || 'Failed to cancel booking');
         }
-      } catch (error) {
-        toast.error('Error cancelling booking');
+      } catch (error: any) {
+        toast.error(error.message || 'Error cancelling booking');
       }
     }
   };

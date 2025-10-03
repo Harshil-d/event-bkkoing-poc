@@ -49,11 +49,11 @@ const BookEventPage: React.FC = () => {
       if (response.statusCode === constants.api.httpStatusCodes.ok) {
         setEvent(response.data);
       } else {
-        toast.error('Event not found');
+        toast.error(response.message || 'Event not found');
         navigate('/events');
       }
-    } catch (error) {
-      toast.error('Error fetching event');
+    } catch (error: any) {
+      toast.error(error.message || 'Error fetching event');
       navigate('/events');
     } finally {
       setLoading(false);
@@ -82,10 +82,10 @@ const BookEventPage: React.FC = () => {
         toast.success('Event booked successfully!');
         navigate('/my-bookings');
       } else {
-        toast.error('Failed to book event');
+        toast.error(response.message || 'Failed to book event');
       }
-    } catch (error) {
-      toast.error('Error booking event');
+    } catch (error: any) {
+      toast.error(error.message || 'Error booking event');
     } finally {
       setBookingLoading(false);
     }
